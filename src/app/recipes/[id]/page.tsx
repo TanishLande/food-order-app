@@ -1,4 +1,3 @@
-
 import { CardFooter } from "@/components/ui/card"
 import { CardContent } from "@/components/ui/card"
 import { Card } from "@/components/ui/card"
@@ -47,6 +46,7 @@ const recipes = [
       "Garnish with fresh parsley before serving.",
       "Can be served immediately or refrigerated for up to 2 days.",
     ],
+    video: "/login .mp4",
     nutrition: {
       calories: 420,
       protein: "15g",
@@ -88,6 +88,7 @@ const recipes = [
       "Grill for 4-6 minutes per side, or until the salmon flakes easily with a fork.",
       "Serve immediately with lemon wedges and your choice of roasted vegetables.",
     ],
+    video: "https://example.com/videos/lemon-herb-grilled-salmon.mp4",
     nutrition: {
       calories: 320,
       protein: "34g",
@@ -134,6 +135,7 @@ const recipes = [
       "Remove from heat, cover, and let stand for 2 minutes.",
       "Serve immediately, garnished with fresh parsley and additional Parmesan cheese.",
     ],
+    video: "https://example.com/videos/creamy-mushroom-risotto.mp4",
     nutrition: {
       calories: 450,
       protein: "12g",
@@ -176,6 +178,7 @@ const recipes = [
       "Sprinkle with red pepper flakes (if using), additional salt and pepper to taste, and fresh herbs.",
       "Serve immediately.",
     ],
+    video: "https://example.com/videos/avocado-egg-toast.mp4",
     nutrition: {
       calories: 380,
       protein: "15g",
@@ -224,6 +227,7 @@ const recipes = [
       "Taste and adjust seasoning as needed with more fish sauce, sugar, or lime juice.",
       "Serve hot over steamed jasmine rice.",
     ],
+    video: "https://example.com/videos/thai-green-curry.mp4",
     nutrition: {
       calories: 420,
       protein: "25g",
@@ -262,6 +266,7 @@ const recipes = [
       "Arrange toppings artfully on top of the smoothie.",
       "Serve immediately and enjoy with a spoon.",
     ],
+    video: "https://example.com/videos/berry-smoothie-bowl.mp4",
     nutrition: {
       calories: 320,
       protein: "5g",
@@ -432,6 +437,18 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
           </ol>
         </div>
       </div>
+
+      {/* Video Tutorial */}
+      {recipe.video && (
+        <div className="mt-12">
+          <h2 className="mb-4 text-2xl font-bold">Video Tutorial</h2>
+          <div className="overflow-hidden rounded-lg">
+            <video src={recipe.video} controls className="w-full aspect-video" poster={recipe.image}>
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      )}
 
       <Separator className="my-12" />
 
