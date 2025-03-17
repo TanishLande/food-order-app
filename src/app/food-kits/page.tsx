@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Check, ChevronRight, Clock, ShoppingBag, Star } from "lucide-react"
-import React from "react"
+import React, { useRef } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -68,9 +68,85 @@ const foodKits = [
   },
 ]
 
-export default function FoodKitsPage() {
-  // Fallback image in public folder
+// Separate component for each Food Kit Card to handle image loading state
+function FoodKitCard({ kit }: { kit: typeof foodKits[0] }) {
+  const [imageLoaded, setImageLoaded] = React.useState(false)
   const fallbackImage = "/placeholder.jpg"
+
+  const handleImageError = () => setImageLoaded(false)
+
+  return (
+    <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg">
+      <div className="aspect-video w-full overflow-hidden">
+        <Image
+          src={kit.image}
+          alt={kit.name}
+          width={600}
+          height={400}
+          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+          onError={handleImageError}
+          onLoad={() => setImageLoaded(true)}
+          style={{ display: imageLoaded ? "block" : "none" }}
+        />
+        {!imageLoaded && (
+          <Image
+            src={fallbackImage}
+            alt={`${kit.name} fallback`}
+            width={600}
+            height={400}
+            className="h-full w-full object-cover"
+          />
+        )}
+ FILL      </div>
+      <CardContent className="p-6">
+        <div className="mb-2 flex items-center justify-between">
+          <Badge className="bg-primary text-primary-foreground">${kit.price.toFixed(2)}</Badge>
+          <div className="flex items-center">
+            <Star className="mr-1 h-4 w-4 fill-yellow-400 text-yellow-400" />
+            <span className="text-sm font-medium">{kit.rating}</span>
+            <span className="ml-1 text-xs text-muted-foreground">({kit.reviewCount})</span>
+          </div>
+        </div>
+        <h3 className="mb-2 text-xl font-bold">{kit.name}</h3>
+        <p className="mb-4 text-sm text-muted-foreground line-clamp-2">{kit.description}</p>
+        <div className="mb-4 grid grid-cols-2 gap-2 text-sm">
+          <div className="flex items-center">
+            <User className="mr-2 h-4 w-4 text-muted-foreground" />
+            <span>{kit.servings} servings</span>
+          </div>
+          <div className="flex items-center">
+            <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+            <span>{kit.mealsPerWeek} meals/week</span>
+          </div>
+          <div className="flex items-center">
+            <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+            <span>{kit.prepTime} prep</span>
+          </div>
+        </div>
+        <div className="space-y-2">
+          {kit.features.map((feature, index) => (
+            <div key={index} className="flex items-start">
+              <Check className="mr-2 h-4 w-4 text-primary" />
+              <span className="text-sm">{feature}</span>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+      <CardFooter className="border-t p-6">
+        <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+          <Link href={`/food-kits/${kit.id}`}>View Details</Link>
+        </Button>
+      </CardFooter>
+    </Card>
+  )
+}
+
+export default function FoodKitsPage() {
+  const foodKitsSectionRef = useRef<HTMLDivElement>(null)
+
+  const scrollToFoodKits = () => {
+    foodKitsSectionRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -78,14 +154,18 @@ export default function FoodKitsPage() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-sage-900/90 to-sage-800/70 dark:from-background/80 dark:to-background/60" />
         <div className="relative mx-auto flex max-w-screen-xl flex-col items-center px-4 py-16 text-center text-white md:py-24">
-          <h1 className="mb-6 text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
+          <h1 className="mb-6 text-3xl text-black dark:text-white font-extrabold tracking-tight sm:text-4xl md:text-5xl">
             Meal Kits Delivered to Your Door
           </h1>
           <p className="mb-8 max-w-lg text-lg leading-relaxed text-white/90 dark:text-muted-foreground/90">
             Everything you need to cook delicious, nutritious meals at home. Fresh ingredients, pre-portioned and ready
             to cook.
           </p>
-          <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+          <Button
+            size="lg"
+            className="bg-accent text-accent-foreground hover:bg-accent/90"
+            onClick={scrollToFoodKits}
+          >
             Get Started
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
@@ -97,7 +177,6 @@ export default function FoodKitsPage() {
             fill
             priority
             className="object-cover opacity-50"
-            onError={(e) => ((e.target as HTMLImageElement).src = fallbackImage)}
           />
         </div>
       </section>
@@ -148,7 +227,7 @@ export default function FoodKitsPage() {
       </section>
 
       {/* Food Kits Section */}
-      <section className="py-16">
+      <section ref={foodKitsSectionRef} className="py-16">
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-12 text-center">
             <h2 className="mb-4 text-3xl font-extrabold tracking-tight sm:text-4xl">Our Food Kits</h2>
@@ -158,78 +237,9 @@ export default function FoodKitsPage() {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-3">
-            {foodKits.map((kit) => {
-              const [imageLoaded, setImageLoaded] = React.useState(false)
-              const handleImageError = () => setImageLoaded(false)
-
-              return (
-                <Card
-                  key={kit.id}
-                  className="overflow-hidden transition-all duration-300 hover:shadow-lg"
-                >
-                  <div className="aspect-video w-full overflow-hidden">
-                    <Image
-                      src={kit.image}
-                      alt={kit.name}
-                      width={600}
-                      height={400}
-                      className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                      onError={handleImageError}
-                      onLoad={() => setImageLoaded(true)}
-                      style={{ display: imageLoaded ? "block" : "none" }}
-                    />
-                    {!imageLoaded && (
-                      <Image
-                        src={fallbackImage}
-                        alt={`${kit.name} fallback`}
-                        width={600}
-                        height={400}
-                        className="h-full w-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <CardContent className="p-6">
-                    <div className="mb-2 flex items-center justify-between">
-                      <Badge className="bg-primary text-primary-foreground">${kit.price.toFixed(2)}</Badge>
-                      <div className="flex items-center">
-                        <Star className="mr-1 h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">{kit.rating}</span>
-                        <span className="ml-1 text-xs text-muted-foreground">({kit.reviewCount})</span>
-                      </div>
-                    </div>
-                    <h3 className="mb-2 text-xl font-bold">{kit.name}</h3>
-                    <p className="mb-4 text-sm text-muted-foreground line-clamp-2">{kit.description}</p>
-                    <div className="mb-4 grid grid-cols-2 gap-2 text-sm">
-                      <div className="flex items-center">
-                        <User className="mr-2 h-4 w-4 text-muted-foreground" />
-                        <span>{kit.servings} servings</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-                        <span>{kit.mealsPerWeek} meals/week</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                        <span>{kit.prepTime} prep</span>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      {kit.features.map((feature, index) => (
-                        <div key={index} className="flex items-start">
-                          <Check className="mr-2 h-4 w-4 text-primary" />
-                          <span className="text-sm">{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                  <CardFooter className="border-t p-6">
-                    <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                      <Link href={`/food-kits/${kit.id}`}>View Details</Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              )
-            })}
+            {foodKits.map((kit) => (
+              <FoodKitCard key={kit.id} kit={kit} />
+            ))}
           </div>
         </div>
       </section>
@@ -306,7 +316,11 @@ export default function FoodKitsPage() {
             <p className="mb-8 text-lg leading-relaxed text-primary-foreground/90">
               Join thousands of satisfied customers and start enjoying fresh, delicious meals today.
             </p>
-            <Button size="lg" className="bg-white text-primary hover:bg-white/90">
+            <Button
+              size="lg"
+              className="bg-white text-primary hover:bg-white/90"
+              onClick={scrollToFoodKits}
+            >
               Get Started Now
             </Button>
           </div>

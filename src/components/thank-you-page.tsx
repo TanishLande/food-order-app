@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { CheckCircle, Home, UtensilsCrossed } from "lucide-react"
+import { CheckCircle, StepBack, UtensilsCrossed } from "lucide-react"
 import { useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -70,10 +70,10 @@ export default function ThankYouPage() {
         <CardFooter className={`flex flex-col gap-4 pt-4 pb-6 transform transition-all duration-500 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
           <Button
             className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white font-medium py-6 transition-all duration-300 shadow-md hover:shadow-lg"
-            onClick={() => router.push("/menu")}
+            onClick={() => router.back()}
           >
-            <UtensilsCrossed className="mr-2 h-5 w-5" />
-            Browse Menu
+            <StepBack className="mr-2 h-5 w-5" />
+            Back 
           </Button>
           <Button
             variant="outline"
@@ -82,7 +82,7 @@ export default function ThankYouPage() {
                      font-medium py-6 transition-all duration-300"
             onClick={() => router.push("/")}
           >
-            <Home className="mr-2 h-5 w-5" />
+            <UtensilsCrossed className="mr-2 h-5 w-5" />
             Return Home
           </Button>
         </CardFooter>
