@@ -8,6 +8,7 @@ import { ArrowLeft, Clock, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import CommentsSection from "@/components/comments/comments-section"
 
 // Extended sample recipes data with ingredients and instructions
 const recipes = [
@@ -46,7 +47,7 @@ const recipes = [
       "Garnish with fresh parsley before serving.",
       "Can be served immediately or refrigerated for up to 2 days.",
     ],
-    video: "/login .mp4",
+    video: "https://youtu.be/UjnDpcgJXvA?si=PTI2dulbGL9_WGPu",
     nutrition: {
       calories: 420,
       protein: "15g",
@@ -439,16 +440,33 @@ export default function RecipeDetailPage({ params }: { params: { id: string } })
       </div>
 
       {/* Video Tutorial */}
-      {recipe.video && (
+      {
+      recipe.video && (
         <div className="mt-12">
           <h2 className="mb-4 text-2xl font-bold">Video Tutorial</h2>
           <div className="overflow-hidden rounded-lg">
-            <video src={recipe.video} controls className="w-full aspect-video" poster={recipe.image}>
+            <iframe
+              src={
+                recipe.video
+                  .replace("youtu.be/", "youtube.com/embed/")
+                  .replace("youtube.com/watch?v=", "youtube.com/embed/")
+                  .split("&")[0]
+              }
+              className="w-full aspect-video"
+              title={`${recipe.title} Video Tutorial`}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            >
               Your browser does not support the video tag.
-            </video>
+            </iframe>
           </div>
         </div>
-      )}
+      )
+    }
+
+      {/* Comments Section */}
+      <CommentsSection recipeId={recipe.id} />
 
       <Separator className="my-12" />
 

@@ -1,4 +1,3 @@
-// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,35 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String     @id @default(uuid())
-  clerkId   String     @unique
-  username  String     @unique
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  cartItems CartItem[] // User's cart items
-}
-
-model MenuItem {
-  id          String     @id @default(uuid())
-  name        String
-  description String
-  price       Decimal    @db.Decimal(5, 2)
-  image       String
-  prepTime    String
-  category    String
-  dietary     String[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  cartItems   CartItem[] // Menu items in carts
-}
-
-model CartItem {
-  id        String   @id @default(uuid())
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  recipeId  String
   userId    String
-  menuItemId String
-  quantity  Int      @default(1)
+  userName  String
+  userImage String?
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  menuItem  MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
 }

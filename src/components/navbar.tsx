@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils"
 import { ModeToggle } from "./mode-toggle"
 import { CartSheet } from "./cart-sheet"
 
+
 const routes = [
   { name: "Home", path: "/" },
   { name: "Menu", path: "/menu" },
@@ -26,6 +27,7 @@ export function Navbar() {
   const pathname = usePathname()
   const [isScrolled, setIsScrolled] = React.useState(false)
   const { isSignedIn } = useAuth()
+
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -67,6 +69,8 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {/* Language Selector */}
+          
           <ModeToggle />
           {/* Conditionally render CartSheet only if authenticated */}
           {isSignedIn && <CartSheet />}
@@ -103,7 +107,7 @@ export function Navbar() {
                     <span className="sr-only">Close</span>
                   </SheetClose>
                 </div>
-                <nav className="flex flex-col gap-4 ">
+                <nav className="flex flex-col gap-4">
                   {routes.map((route) => (
                     <SheetClose asChild key={route.path}>
                       <Link
@@ -117,6 +121,7 @@ export function Navbar() {
                       </Link>
                     </SheetClose>
                   ))}
+                  
                 </nav>
               </div>
             </SheetContent>
